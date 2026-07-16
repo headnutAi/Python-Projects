@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hunde-Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #dogImage {
+      max-width: 100%;
+      height: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Willkommen auf der Hunde-Website!</h1>
+  <p>Hier ist ein süßes Bild eines Hundes:</p>
+  <img id="dogImage" src="https://www.hillspet.de/content/dam/cp-sites/hills/hills-pet/global/general/2018/march/dog-lying-down-in-the-grass.jpg"/>
+  <p>Klicke auf den Button, um ein anderes Bild zu sehen:</p>
+  <button id="changeImageButton">Klick mich</button>
+
+  <script>
+    // Array mit Bild-URLs
+    const dogImages = [
+      "https://www.hillspet.de/content/dam/cp-sites/hills/hills-pet/global/general/2018/march/dog-lying-down-in-the-grass.jpg",
+      "https://www.hillspet.de/content/dam/cp-sites/hills/hills-pet/global/general/2018/march/dog-and-cat-playing.jpg",
+      "https://www.hillspet.de/content/dam/cp-sites/hills/hills-pet/global/general/2018/march/dog-wearing-a-birthday-hat.jpg"
+    ];
+
+    // Funktion zum Ändern des Bildes
+    function changeImage() {
+      const randomIndex = Math.floor(Math.random() * dogImages.length);
+      const randomImageUrl = dogImages[randomIndex];
+      document.getElementById('dogImage').src = randomImageUrl;
+    }
+
+    // Event-Listener für den Button
+    document.getElementById('changeImageButton').addEventListener('click', changeImage);
+  </script>
+</body>
+</html>
