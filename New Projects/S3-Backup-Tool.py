@@ -102,6 +102,7 @@ def main():
     #   -> needs_upload prüfen
     #   -> ggf. upload_with_retry aufrufen
     #   -> stats hochzählen
+    #   -> test test
 
     logger.info(
         "Fertig. Hochgeladen: %d, übersprungen: %d, fehlgeschlagen: %d",
