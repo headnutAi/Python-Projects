@@ -2,7 +2,7 @@ import argparse
 import hashlib
 import logging
 from pathlib import Path
-
+import time
 import boto3
 from botocore.exceptions import ClientError
 from boto3.s3.transfer import TransferConfig
@@ -72,22 +72,26 @@ def needs_upload(local_md5: str, remote_etag: str | None) -> bool:
 
 
 def upload_with_retry(s3_client, filepath: Path, bucket: str, key: str, dry_run: bool):
-    """
-    Upload mit Retry + exponentiellem Backoff.
 
-    - Bei dry_run=True: nur loggen, kein echter Call.
-    - Große Dateien (> MULTIPART_THRESHOLD) über TransferConfig.
-    - Bei ClientError: bis zu MAX_RETRIES Versuche, mit steigender
-      Wartezeit dazwischen (time.sleep(2 ** versuch)).
-    - Nach MAX_RETRIES gescheiterten Versuchen: Fehler loggen und
-      False zurückgeben (Skript soll NICHT abbrechen).
+    retries = 0
+    config = TransferConfig(multipart_threshold=MULTIPART_THRESHOLD)
 
-    Doku TransferConfig: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/customizations/s3.html#boto3.s3.transfer.TransferConfig
-    Doku upload_file: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_file
-    """
-    # TODO
-    raise NotImplementedError
+    if dry_run:
+        logger.info(f"Dry run: {filepath}")
+        return True
+    else:
 
+        while retries < MAX_RETRIES:
+            try:
+                s3_client.upload_file(filepath, bucket, key, Config=config)
+                return True
+            except ClientError as e:
+                retries += 1
+                time.sleep(2 ** retries)
+                logger.info(f"Retry: {retries} / {MAX_RETRIES}")
+
+        logger.info(f"Upload failed: {filepath}")
+        return False
 
 def main():
     args = parse_args()
@@ -95,14 +99,22 @@ def main():
 
     stats = {"uploaded": 0, "skipped": 0, "failed": 0}
 
-    # TODO: iter_local_files durchgehen
-    #   -> relativen S3-Key bauen (local_dir-relativer Pfad + optionalem prefix)
-    #   -> compute_md5
-    #   -> get_remote_etag
-    #   -> needs_upload prüfen
-    #   -> ggf. upload_with_retry aufrufen
-    #   -> stats hochzählen
-    #   -> test test
+    local_dir = Path(args.local_dir)
+
+
+    for local_file in iter_local_files(local_dir):
+
+        hash = compute_md5(filepath=local_file)
+        etag_hash = get_remote_etag(s3_client, bucket=args.bucket, key=local_file.relative_to(local_dir).as_posix())
+
+        if needs_upload(local_md5=hash, remote_etag=etag_hash):
+            if upload_with_retry(s3_client, local_file, args.bucket, local_file.relative_to(local_dir).as_posix(), args.dry_run):
+                stats["uploaded"] += 1
+            else:
+                stats["failed"] += 1
+
+        else:
+            stats["skipped"] += 1
 
     logger.info(
         "Fertig. Hochgeladen: %d, übersprungen: %d, fehlgeschlagen: %d",
