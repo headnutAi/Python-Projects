@@ -8,7 +8,6 @@ class UploadHandler(FileSystemEventHandler):
         self.uploader = uploader
         self.prefix = prefix
         self.last_event_time = {}
-        # TODO: letzte Upload-Zeitpunkte pro Datei speichern (für Debouncing)
         pass
 
     def should_ignore(self, path):
