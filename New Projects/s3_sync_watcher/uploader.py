@@ -14,7 +14,7 @@ class S3Uploader:
         if self.dry_run:
             logging.info('Dry run, skipping upload')
             return None
-        max_retries = 3
+        max_retries = 4
         wait_seconds = 1
 
         for i in range(max_retries):
@@ -36,39 +36,5 @@ class S3Uploader:
                     time.sleep(wait_seconds)
                     wait_seconds *= 2
 
-        logging.info(f"Upload nach{max_retries} retries failed")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # TODO: wenn self.dry_run True ist: nur loggen, was hochgeladen würde, dann return
-
-
-        # TODO: max_retries festlegen (z.B. 3)
-        # TODO: Schleife über die Versuche (for/range oder while)
-
-            # TODO: try-Block:
-            #   - self.client.upload_file(local_path, self.bucket, key) aufrufen
-            #   - bei Erfolg: loggen und return (Schleife verlassen)
-
-            # TODO: except NoCredentialsError:
-            #   - loggen, dass Zugangsdaten fehlen
-            #   - kein Retry sinnvoll -> abbrechen/raise
-
-            # TODO: except ClientError as e:
-            #   - e.response['Error']['Code'] auslesen
-            #   - unterscheiden: manche Fehler (z.B. AccessDenied, NoSuchBucket) -> kein Retry, abbrechen
-            #   - andere Fehler -> retry mit Backoff (time.sleep mit steigender Wartezeit)
-            #   - wenn letzter Versuch erreicht: Fehler weiterreichen/loggen
+        logging.info(f"Upload after{max_retries} retries failed")
         pass
