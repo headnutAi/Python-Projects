@@ -39,6 +39,9 @@ class UploadHandler(FileSystemEventHandler):
             self.last_event_time[path] = currentTime
             return False
     def on_created(self, event):
+
+        filename = os.path.basename(event.src_path)
+
         if not event.is_directory:
 
             if self.should_ignore(event.src_path):
@@ -48,9 +51,13 @@ class UploadHandler(FileSystemEventHandler):
                 logging.info("ignoring debounce{}".format(event.src_path))
                 return
 
+            self.uploader.upload(event.src_path, self.prefix + filename)
             logging.info(f"File Created, {event.src_path}")
 
     def on_modified(self, event):
+
+        filename = os.path.basename(event.src_path)
+
         if not event.is_directory:
 
             if self.should_ignore(event.src_path):
@@ -60,7 +67,10 @@ class UploadHandler(FileSystemEventHandler):
                 logging.info("ignoring debounced{}".format(event.src_path))
                 return
 
+            self.uploader.upload(event.src_path, self.prefix + filename)
             logging.info(f"File Modified, {event.src_path}")
+
+
         pass
 
 
