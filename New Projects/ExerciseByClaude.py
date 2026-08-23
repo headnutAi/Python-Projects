@@ -19,15 +19,36 @@ mit dem du dein Ergebnis überprüfen kannst (einfach ausführen).
 #         die von Exception erbt. Sie soll geworfen werden, wenn eine
 #         ungültige Note (nicht zwischen 1.0 und 6.0) eingetragen wird.
 
+class InvalidGradeError(Exception):
+    """Raised when grades are either below 1.0 or above 6.0"""
+
+    pass
+
+
 
 class Student:
     def __init__(self, name):
         self.name = name
+        self.grades = {}
+
+
         # TODO 2: Lege ein leeres Dictionary "self.grades" an.
         #         Struktur: {"Mathe": [2.0, 1.7], "Deutsch": [3.0]}
-        pass
+
 
     def add_grade(self, subject, grade):
+
+        try:
+            if grade >= 1.0 and grade <= 6.0:
+                if subject not in self.grades:
+                    self.grades[subject] = grade
+                else:
+                    self.grades[subject].append(grade)
+
+        except InvalidGradeError as e:
+            print(f"{e} grade is either to low or to high")
+
+
         """Fügt eine Note für ein Fach hinzu.
 
         TODO 3: Prüfe, ob grade zwischen 1.0 und 6.0 liegt (beide inklusive).
@@ -40,6 +61,22 @@ class Student:
         pass
 
     def average(self, subject=None):
+
+        if subject is not None:
+            grade = self.grades[subject]
+
+            avg = sum(grade)
+
+            avg = round(avg/len(grade), 2)
+            return avg
+        else:
+
+            flatlist = [x for l in self.grades.values() for x in l]
+
+            avg = sum(flatlist)
+            avg = round(avg / len(flatlist), 2)
+            return avg
+
         """Berechnet den Notendurchschnitt.
 
         TODO 4a: Wenn subject angegeben ist, gib den Durchschnitt für
