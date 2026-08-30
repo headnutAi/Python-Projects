@@ -10,14 +10,9 @@ Geübte Konzepte:
 - Sortieren mit key-Funktionen (lambda)
 - String-Formatierung (f-strings)
 
-Bearbeite die TODOs der Reihe nach. Am Ende steht ein Testblock,
-mit dem du dein Ergebnis überprüfen kannst (einfach ausführen).
 """
 
 
-# TODO 1: Erstelle eine eigene Exception-Klasse "InvalidGradeError",
-#         die von Exception erbt. Sie soll geworfen werden, wenn eine
-#         ungültige Note (nicht zwischen 1.0 und 6.0) eingetragen wird.
 
 class InvalidGradeError(Exception):
     """Raised when grades are either below 1.0 or above 6.0"""
@@ -30,11 +25,6 @@ class Student:
     def __init__(self, name):
         self.name = name
         self.grades = {}
-
-
-        # TODO 2: Lege ein leeres Dictionary "self.grades" an.
-        #         Struktur: {"Mathe": [2.0, 1.7], "Deutsch": [3.0]}
-
 
     def add_grade(self, subject, grade):
 
@@ -49,15 +39,7 @@ class Student:
             print(f"{e} grade is either to low or to high")
 
 
-        """Fügt eine Note für ein Fach hinzu.
 
-        TODO 3: Prüfe, ob grade zwischen 1.0 und 6.0 liegt (beide inklusive).
-                Falls nicht: wirf InvalidGradeError mit einer sinnvollen
-                Fehlermeldung.
-                Falls doch: füge die Note zur Liste des Fachs in
-                self.grades hinzu. Falls das Fach noch nicht existiert,
-                lege es an.
-        """
         pass
 
     def average(self, subject=None):
@@ -77,15 +59,9 @@ class Student:
             avg = round(avg / len(flatlist), 2)
             return avg
 
-        """Berechnet den Notendurchschnitt.
 
-        TODO 4a: Wenn subject angegeben ist, gib den Durchschnitt für
-                 genau dieses Fach zurück (float, gerundet auf 2 Nachkommastellen).
-        TODO 4b: Wenn subject None ist, gib den Gesamtdurchschnitt über
-                 ALLE Noten in ALLEN Fächern zurück.
-        Hinweis: Nutze eine List Comprehension, um alle Noten aus
-                 self.grades.values() in eine flache Liste zu bringen.
-        """
+
+
         pass
 
     def __repr__(self):
