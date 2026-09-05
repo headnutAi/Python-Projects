@@ -28,19 +28,11 @@ class Student:
 
     def add_grade(self, subject, grade):
 
-        try:
-            if grade >= 1.0 and grade <= 6.0:
-                if subject not in self.grades:
-                    self.grades[subject] = grade
-                else:
-                    self.grades[subject].append(grade)
 
-        except InvalidGradeError as e:
-            print(f"{e} grade is either to low or to high")
-
-
-
-        pass
+        if grade >= 1.0 and grade <= 6.0:
+            self.grades.setdefault(subject, []).append(grade)
+        else:
+            raise InvalidGradeError(f"{grade} liegt nicht innerhalb des Spektrums, nicht zwischen 1 & 6")
 
     def average(self, subject=None):
 
@@ -65,9 +57,9 @@ class Student:
         pass
 
     def __repr__(self):
-        # TODO 5: Gib eine sinnvolle String-Repräsentation zurück, z.B.:
-        #         "Student(name='Anna', durchschnitt=2.15)"
-        #         Nutze dafür self.average().
+
+        return f"Student(name={self.name!r}, durchschnitt={self.average()})"
+
         pass
 
 
@@ -78,15 +70,16 @@ class ClassRoom:
     def add_student(self, student):
         self.students.append(student)
 
-    def best_students(self, n=3):
-        """Gibt die n besten Studierenden zurück (niedrigster Durchschnitt = am besten).
+    def best_students(self, x=3):
 
-        TODO 6: Sortiere self.students nach ihrem Gesamtdurchschnitt
-                (aufsteigend, kleinster Wert zuerst) und gib die
-                ersten n Elemente als Liste zurück.
-                Nutze sorted() mit einem key=lambda.
-        """
-        pass
+        n = len(self.students)
+
+        for i in range(n-1):
+            for j in range(n-1-i):
+                if self.students[j].average() > self.students[j+1].average():
+                    self.students[j], self.students[j+1] = self.students[j+1], self.students[j]
+
+        return self.students[:x]
 
     def subject_ranking(self, subject):
         """Gibt eine Liste von (name, durchschnitt) Tupeln zurück, sortiert
@@ -96,9 +89,25 @@ class ClassRoom:
                 diesem Fach haben. Nutze dafür list comprehension +
                 Exception-Handling (z.B. try/except oder Prüfung mit `in`).
         """
-        pass
 
 
+        try:
+            ranking = []
+            for s in self.students:
+                if subject in s.grades:  # nur wer im Fach Noten hat
+                    ranking.append((s.name, s.average(subject)))
+
+            n = len(ranking)
+            for x in range(
+                    n - 1):  # Bubble Sort
+                for y in range(n - 1 - x):
+                    if ranking[y][1] > ranking[y + 1][
+                        1]:  # nach Durchschnitt vergleichen
+                        ranking[y], ranking[y + 1] = ranking[y + 1], ranking[y]
+
+            return ranking
+        except KeyError as e:
+            print("Liste konnte nicht erstellt werden.", e)
 # ---------------------------------------------------------------------------
 # Testblock — hier prüfst du deine Lösung. Nicht verändern, nur ausführen.
 # ---------------------------------------------------------------------------
