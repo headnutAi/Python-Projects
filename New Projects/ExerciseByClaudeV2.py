@@ -60,35 +60,34 @@ class LoanNotFoundError(Exception):
 # ---------------------------------------------------------------------------
 
 class Genre(Enum):
-    """TODO 1: Lege die Genres FANTASY, SCIFI, KRIMI und SACHBUCH an.
 
-    Gib jedem Member einen lesbaren String als Wert, z.B. FANTASY = "Fantasy".
-    """
-    pass
-
-
+    FANTASY = "Fantasy"
+    SCIFI = "Sci-fi"
+    KRIMI = "Krimi"
+    SACHBUCH = "Sachbuch"
 # ---------------------------------------------------------------------------
 # 3) Datenklassen
 # ---------------------------------------------------------------------------
 
 @dataclass
 class Book:
-    """Ein Buchtitel mit mehreren physischen Exemplaren.
 
-    TODO 2: Definiere die Felder:
-        isbn: str
-        title: str
-        author: str
-        genre: Genre
-        copies_total: int
-        copies_available: int  -> NICHT im Konstruktor!
-                                  Nutze field(init=False) und setze den Wert
-                                  in __post_init__ auf copies_total.
+    isbn : str
+    title : str
+    author : str
+    genre : Genre
+    copies_total : int
+    copies_available : int = field(init=False)
 
-    TODO 3: Schreibe die Property `is_available`, die True liefert,
-            solange copies_available > 0 ist.
-    """
-    pass
+    def __post_init__(self):
+        self.copies_available = self.copies_total
+
+    @property
+    def is_available(self):
+        if self.copies_available <= 0:
+            return False
+        return True
+
 
 
 @dataclass
